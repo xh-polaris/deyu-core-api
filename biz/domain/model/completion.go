@@ -10,10 +10,10 @@ import (
 	"github.com/cloudwego/eino/schema"
 	"github.com/cloudwego/hertz/pkg/protocol/sse"
 	"github.com/google/wire"
-	"github.com/xh-polaris/innospark-core-api/biz/adaptor"
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/core_api"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/cst"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util/logx"
+	"github.com/xh-polaris/deyu-core-api/biz/adaptor"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util/logx"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/google/wire"
-	"github.com/xh-polaris/innospark-core-api/biz/adaptor"
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/core_api"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/cst"
-	mf "github.com/xh-polaris/innospark-core-api/biz/infra/mapper/feedback"
-	mmsg "github.com/xh-polaris/innospark-core-api/biz/infra/mapper/message"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util"
+	"github.com/xh-polaris/deyu-core-api/biz/adaptor"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
+	mf "github.com/xh-polaris/deyu-core-api/biz/infra/mapper/feedback"
+	mmsg "github.com/xh-polaris/deyu-core-api/biz/infra/mapper/message"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util"
 )
 
 type IFeedbackService interface {

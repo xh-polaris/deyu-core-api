@@ -4,14 +4,14 @@ import (
 	"context"
 
 	"github.com/google/wire"
-	"github.com/xh-polaris/innospark-core-api/biz/adaptor"
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/core_api"
-	dm "github.com/xh-polaris/innospark-core-api/biz/domain/model"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/cst"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/mapper/conversation"
-	mmsg "github.com/xh-polaris/innospark-core-api/biz/infra/mapper/message"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util/logx"
+	"github.com/xh-polaris/deyu-core-api/biz/adaptor"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
+	dm "github.com/xh-polaris/deyu-core-api/biz/domain/model"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/conversation"
+	mmsg "github.com/xh-polaris/deyu-core-api/biz/infra/mapper/message"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util/logx"
 )
 
 type IConversationService interface {

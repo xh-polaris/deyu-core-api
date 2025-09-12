@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/eino/components/model"
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/core_api"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
 )
 
 type getModelFunc func(ctx context.Context, uid string, req *core_api.CompletionsReq) (model.ToolCallingChatModel, error)

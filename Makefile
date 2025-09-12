@@ -1,5 +1,5 @@
 .PHONY: start build wire update new clean
-PROJECT_NAME := innospark
+PROJECT_NAME := deyu
 SERVICE_NAME := $(PROJECT_NAME).core_api
 MODULE_NAME := github.com/xh-polaris/$(PROJECT_NAME)-core-api
 

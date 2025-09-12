@@ -8,11 +8,11 @@ import (
 	"github.com/cloudwego/eino/schema"
 	"github.com/google/wire"
 	"github.com/jinzhu/copier"
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/core_api"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/cst"
-	mmsg "github.com/xh-polaris/innospark-core-api/biz/infra/mapper/message"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util/logx"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
+	mmsg "github.com/xh-polaris/deyu-core-api/biz/infra/mapper/message"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util/logx"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

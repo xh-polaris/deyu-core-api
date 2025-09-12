@@ -4,7 +4,7 @@ package main
 
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
-	router "github.com/xh-polaris/innospark-core-api/biz/adaptor/router"
+	router "github.com/xh-polaris/deyu-core-api/biz/adaptor/router"
 )
 
 // register registers all routers.

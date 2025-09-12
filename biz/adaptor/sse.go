@@ -5,7 +5,7 @@ import (
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/sse"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util/logx"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util/logx"
 )
 
 // SSEStream SSE事件流

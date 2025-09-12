@@ -3,7 +3,7 @@ package message
 import (
 	"time"
 
-	"github.com/xh-polaris/innospark-core-api/biz/infra/cst"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

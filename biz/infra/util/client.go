@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/cloudwego/hertz/pkg/common/json"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util/logx"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util/logx"
 )
 
 // httpx/client 是一个简单的http客户端

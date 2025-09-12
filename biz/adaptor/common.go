@@ -11,10 +11,10 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 	hertz "github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util/logx"
 	"github.com/xh-polaris/gopkg/util"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/config"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/cst"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util/logx"
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel/propagation"
 )

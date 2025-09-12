@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/cloudwego/eino/components/model"
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/core_api"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
 )
 
 // getOpts TODO 处理模型 配置

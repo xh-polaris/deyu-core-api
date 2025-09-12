@@ -1,5 +1,5 @@
 #!/bin/bash
-RUN_NAME=innospark.core_api
+RUN_NAME=deyu.core_api
 mkdir -p output/bin
 cp script/* output 2>/dev/null
 chmod +x output/bootstrap.sh

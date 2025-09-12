@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/basic"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/basic"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )

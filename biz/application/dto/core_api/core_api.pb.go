@@ -7,8 +7,8 @@
 package core_api
 
 import (
-	_ "github.com/xh-polaris/innospark-core-api/biz/application/dto/basic"
-	_ "github.com/xh-polaris/innospark-core-api/biz/application/dto/http"
+	_ "github.com/xh-polaris/deyu-core-api/biz/application/dto/basic"
+	_ "github.com/xh-polaris/deyu-core-api/biz/application/dto/http"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

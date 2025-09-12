@@ -3,8 +3,8 @@ package feedback
 import (
 	"context"
 
-	"github.com/xh-polaris/innospark-core-api/biz/infra/config"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/cst"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
 	"github.com/zeromicro/go-zero/core/stores/monc"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"

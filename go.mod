@@ -1,4 +1,4 @@
-module github.com/xh-polaris/innospark-core-api
+module github.com/xh-polaris/deyu-core-api
 
 go 1.24.6
 

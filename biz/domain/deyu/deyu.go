@@ -8,11 +8,11 @@ import (
 	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/components/model"
 	"github.com/cloudwego/eino/schema"
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/core_api"
-	dm "github.com/xh-polaris/innospark-core-api/biz/domain/model"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/config"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/cst"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/util"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
+	dm "github.com/xh-polaris/deyu-core-api/biz/domain/model"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util"
 )
 
 func init() {

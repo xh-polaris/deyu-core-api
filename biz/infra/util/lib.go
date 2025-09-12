@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/xh-polaris/innospark-core-api/biz/application/dto/basic"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/config"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/basic"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
 )
 
 func DPrintf(format string, a ...interface{}) {

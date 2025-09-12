@@ -2,12 +2,12 @@ package provider
 
 import (
 	"github.com/google/wire"
-	"github.com/xh-polaris/innospark-core-api/biz/application/service"
-	"github.com/xh-polaris/innospark-core-api/biz/domain/model"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/config"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/mapper/conversation"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/mapper/feedback"
-	"github.com/xh-polaris/innospark-core-api/biz/infra/mapper/message"
+	"github.com/xh-polaris/deyu-core-api/biz/application/service"
+	"github.com/xh-polaris/deyu-core-api/biz/domain/model"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/conversation"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/feedback"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/message"
 )
 
 var provider *Provider
