@@ -27,27 +27,20 @@ type Mongo struct {
 }
 
 type Deyu struct {
+	Name    string
 	APIKey  string
 	BaseURL string
 }
 
-type InnoSpark struct {
-	DefaultBaseURL   string
-	DefaultAPIKey    string
-	DeepThinkBaseURL string
-	DeepThinkAPIKey  string
-}
-
 type Config struct {
 	service.ServiceConf
-	ListenOn  string
-	State     string
-	Auth      Auth
-	Deyu      Deyu
-	InnoSpark InnoSpark
-	Cache     cache.CacheConf
-	Redis     redis.RedisConf
-	Mongo     Mongo
+	ListenOn string
+	State    string
+	Auth     Auth
+	Models   map[string]*Deyu
+	Cache    cache.CacheConf
+	Redis    redis.RedisConf
+	Mongo    Mongo
 }
 
 func NewConfig() (*Config, error) {

@@ -17,6 +17,12 @@ import (
 
 func init() {
 	dm.RegisterModel(DefaultModel, NewChatModel)
+	dm.RegisterModel(BZRModel, NewChatModel)
+	dm.RegisterModel(XKJSModel, NewChatModel)
+	dm.RegisterModel(QYDSModel, NewChatModel)
+	dm.RegisterModel(DYQBModel, NewChatModel)
+	dm.RegisterModel(XYModel, NewChatModel)
+	dm.RegisterModel(JYLFModel, NewChatModel)
 }
 
 var (
@@ -24,6 +30,12 @@ var (
 	once sync.Once
 
 	DefaultModel = "deyu-default"
+	BZRModel     = "deyu-bzr"
+	XKJSModel    = "deyu-xkjs"
+	QYDSModel    = "deyu-qyds"
+	DYQBModel    = "deyu-dygb"
+	XYModel      = "deyu-xy"
+	JYLFModel    = "deyu-jylf"
 	APIVersion   = "v1"
 )
 
@@ -35,10 +47,10 @@ type ChatModel struct {
 
 func NewChatModel(ctx context.Context, uid string, req *core_api.CompletionsReq) (_ model.ToolCallingChatModel, err error) {
 	cli, err = openai.NewChatModel(ctx, &openai.ChatModelConfig{
-		APIKey:     config.GetConfig().Deyu.APIKey,
-		BaseURL:    config.GetConfig().Deyu.BaseURL,
+		APIKey:     config.GetConfig().Models[req.Model].APIKey,
+		BaseURL:    config.GetConfig().Models[req.Model].BaseURL,
 		APIVersion: APIVersion,
-		Model:      DefaultModel,
+		Model:      config.GetConfig().Models[req.Model].Name,
 		User:       &uid,
 		HTTPClient: util.NewDebugClient(),
 	})
@@ -62,6 +74,7 @@ func (c *ChatModel) Stream(ctx context.Context, in []*schema.Message, opts ...mo
 	// messages翻转顺序, 调用模型时消息应该正序
 	var reverse []*schema.Message
 	for i := len(in) - 1; i >= 0; i-- {
+		in[i].Name = ""
 		reverse = append(reverse, in[i])
 	}
 	if reader, err = c.cli.Stream(ctx, reverse, opts...); err != nil {
