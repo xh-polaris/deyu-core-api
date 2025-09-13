@@ -40,7 +40,7 @@ type mongoMapper struct {
 
 func NewMessageMongoMapper(config *config.Config) MongoMapper {
 	conn := monc.MustNewModel(config.Mongo.URL, config.Mongo.DB, collection, config.Cache)
-	rs := redis.MustNewRedis(config.Redis)
+	rs := redis.MustNewRedis(*config.Redis)
 	return &mongoMapper{conn: conn, rs: rs}
 }
 

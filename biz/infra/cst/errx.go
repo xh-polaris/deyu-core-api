@@ -9,10 +9,16 @@ var (
 	UnImplementErr = New(888, "尚未实现的功能")
 	OIDErr         = New(777, "id错误")
 	Interrupt      = New(666, "中断")
+	NotFound       = New(555, "数据不存在")
 )
 
 // conversation 相关
 var (
+	PhoneNilErr             = New(20001, "手机号为空")
+	VerifyCodeSendErr       = New(20002, "验证码发送失败")
+	UnSupportWay            = New(20003, "不支持的登录方式")
+	VerifyCodeErr           = New(20004, "验证码验证失败")
+	LoginErr                = New(20005, "登录失败")
 	ConversationCreationErr = New(30001, "创建对话失败")
 	ConversationRenameErr   = New(30002, "对话标题重命名失败")
 	ConversationListErr     = New(30003, "分页获取历史对话失败")

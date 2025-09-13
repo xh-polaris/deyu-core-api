@@ -90,3 +90,18 @@ func _searchconversationMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _authMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _loginMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _sendverifycodeMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

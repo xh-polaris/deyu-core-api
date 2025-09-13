@@ -23,6 +23,11 @@ func Register(r *server.Hertz) {
 		_agents.POST("/list", append(_listagentsMw(), core_api.ListAgents)...)
 	}
 	{
+		_auth := root.Group("/auth", _authMw()...)
+		_auth.POST("/login", append(_loginMw(), core_api.Login)...)
+		_auth.POST("/verifyCode", append(_sendverifycodeMw(), core_api.SendVerifyCode)...)
+	}
+	{
 		_conversation := root.Group("/conversation", _conversationMw()...)
 		_conversation.POST("/create", append(_createconversationMw(), core_api.CreateConversation)...)
 		_conversation.POST("/delete", append(_deleteconversationMw(), core_api.DeleteConversation)...)

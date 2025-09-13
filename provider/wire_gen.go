@@ -13,6 +13,8 @@ import (
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/conversation"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/feedback"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/message"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/user"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/redis"
 )
 
 // Injectors from wire.go:
@@ -43,11 +45,18 @@ func NewProvider() (*Provider, error) {
 		MessageMapper:  mongoMapper,
 		FeedbackMapper: feedbackMongoMapper,
 	}
+	userMongoMapper := user.NewUserMongoMapper(configConfig)
+	redisRedis := redis.NewRedis(configConfig)
+	authService := &service.AuthService{
+		UserMapper: userMongoMapper,
+		Redis:      redisRedis,
+	}
 	providerProvider := &Provider{
 		Config:              configConfig,
 		CompletionsService:  completionsService,
 		ConversationService: conversationService,
 		FeedbackService:     feedbackService,
+		AuthService:         authService,
 		MessageDomain:       messageDomain,
 		CompletionDomain:    completionDomain,
 	}

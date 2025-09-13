@@ -7,7 +7,7 @@ HANDLER_DIR := biz/adaptor/controller
 MODEL_DIR := biz/application/dto
 ROUTER_DIR := biz/adaptor/router
 
-IDL_DIR ?= ../$(PROJECT_NAME)-idl
+IDL_DIR ?= ../innospark-idl
 # 提取最后一个部分（如 "psych.core_api" → "core_api"）
 MAIN_IDL_BASE := $(subst -,_,$(shell echo $(SERVICE_NAME) | awk -F '.' '{print $$NF}'))
 # 组合成最终路径（如 "$(IDL_DIR)/core_api/core_api.proto"）

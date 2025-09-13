@@ -77,6 +77,7 @@ const (
 	DeleteTime     = "delete_time"
 	Brief          = "brief"
 	Feedback       = "feedback"
+	Phone          = "phone"
 
 	Status        = "status"
 	DeletedStatus = -1
@@ -97,4 +98,8 @@ const (
 	FeedbackLike
 	FeedbackDislike
 	FeedbackDelete
+)
+
+const (
+	VerifyCodeKeyPrefix = "verifyCode:deyu:"
 )

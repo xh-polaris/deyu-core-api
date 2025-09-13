@@ -11,6 +11,7 @@ require (
 	github.com/hertz-contrib/monitor-prometheus v0.1.3
 	github.com/hertz-contrib/obs-opentelemetry/tracing v0.4.1
 	github.com/jinzhu/copier v0.3.5
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.1.26
 	github.com/xh-polaris/gopkg v0.0.0-20250312141711-7327267f4ea6
 	github.com/zeromicro/go-zero v1.9.0
 	go.mongodb.org/mongo-driver v1.12.0
