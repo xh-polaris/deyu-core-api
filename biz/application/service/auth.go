@@ -109,7 +109,7 @@ func (s *AuthService) SendVerifyCode(ctx context.Context, req *core_api.SendVeri
 		return nil, cst.VerifyCodeSendErr
 	}
 	// 发送验证码
-	if req.AuthType[:10] != "xh-polaris" {
+	if len(req.AuthType) >= 10 && req.AuthType[:10] != "xh-polaris" {
 		if err = callSMS(config.GetConfig().SMS, []string{req.AuthId}, code.String()); err != nil {
 			return nil, cst.VerifyCodeSendErr
 		}
