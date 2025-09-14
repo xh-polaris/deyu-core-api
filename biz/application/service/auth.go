@@ -13,6 +13,7 @@ import (
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	tchttp "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/http"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
+	"github.com/xh-polaris/deyu-core-api/biz/application/dto/basic"
 	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
@@ -108,10 +109,13 @@ func (s *AuthService) SendVerifyCode(ctx context.Context, req *core_api.SendVeri
 		return nil, cst.VerifyCodeSendErr
 	}
 	// 发送验证码
-	if err = callSMS(config.GetConfig().SMS, []string{req.AuthId}, code.String()); err != nil {
-		return nil, cst.VerifyCodeSendErr
+	if req.AuthType[:10] != "xh-polaris" {
+		if err = callSMS(config.GetConfig().SMS, []string{req.AuthId}, code.String()); err != nil {
+			return nil, cst.VerifyCodeSendErr
+		}
+		return &core_api.SendVerifyCodeResp{Resp: util.Success()}, nil
 	}
-	return &core_api.SendVerifyCodeResp{Resp: util.Success()}, nil
+	return &core_api.SendVerifyCodeResp{Resp: &basic.Response{Code: 0, Msg: verifyCode}}, nil
 }
 
 func callSMS(sms *config.SMSConfig, phones []string, code string) error {
