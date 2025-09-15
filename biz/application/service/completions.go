@@ -2,14 +2,15 @@ package service
 
 import (
 	"context"
-	"strings"
 
+	"github.com/cloudwego/eino-ext/components/model/openai"
 	"github.com/cloudwego/eino/schema"
 	"github.com/google/wire"
 	"github.com/xh-polaris/deyu-core-api/biz/adaptor"
 	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
 	_ "github.com/xh-polaris/deyu-core-api/biz/domain/deyu"
 	"github.com/xh-polaris/deyu-core-api/biz/domain/model"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/conversation"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/util"
@@ -63,11 +64,10 @@ func (s *CompletionsService) GenerateBrief(ctx context.Context, req *core_api.Ge
 		return nil, cst.UnAuthErr
 	}
 	// 生成标题
-	m, err := model.GetModel(ctx, uid, &core_api.CompletionsReq{
-		Messages:          req.Messages,
-		CompletionsOption: &core_api.CompletionsOption{},
-		Model:             "deyu-default",
-		ConversationId:    req.ConversationId,
+	m, err := openai.NewChatModel(context.Background(), &openai.ChatModelConfig{
+		BaseURL: config.GetConfig().Models["qwen-plus"].BaseURL, // Azure API 基础 URL
+		APIKey:  config.GetConfig().Models["qwen-plus"].APIKey,  // API 密钥
+		Model:   config.GetConfig().Models["qwen-plus"].Name,    // 模型名称
 	})
 	if err != nil {
 		return nil, err
@@ -78,7 +78,6 @@ func (s *CompletionsService) GenerateBrief(ctx context.Context, req *core_api.Ge
 	if err != nil {
 		return nil, err
 	}
-	out.Content = strings.Replace(out.Content, "<think>\n\n</think>\n\n", "", -1)
 	// 更新标题
 	if err = s.ConversationMapper.UpdateConversationBrief(ctx, uid, req.ConversationId, out.Content); err != nil {
 		return nil, err
