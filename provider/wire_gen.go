@@ -31,11 +31,12 @@ func NewProvider() (*Provider, error) {
 	completionDomain := &model.CompletionDomain{
 		MsgDomain: messageDomain,
 	}
-	completionsService := &service.CompletionsService{
-		MsgMaMsgDomain:   messageDomain,
-		CompletionDomain: completionDomain,
-	}
 	conversationMongoMapper := conversation.NewConversationMongoMapper(configConfig)
+	completionsService := &service.CompletionsService{
+		MsgMaMsgDomain:     messageDomain,
+		CompletionDomain:   completionDomain,
+		ConversationMapper: conversationMongoMapper,
+	}
 	conversationService := &service.ConversationService{
 		ConversationMapper: conversationMongoMapper,
 		MessageMapper:      mongoMapper,

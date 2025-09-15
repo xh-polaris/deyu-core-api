@@ -27,6 +27,21 @@ func Completions(ctx context.Context, c *app.RequestContext) {
 	adaptor.PostProcess(ctx, c, &req, resp, err)
 }
 
+// GenerateBrief .
+// @router /conversation/brief [POST]
+func GenerateBrief(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req core_api.GenerateBriefReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := provider.Get().CompletionsService.GenerateBrief(ctx, &req)
+	adaptor.PostProcess(ctx, c, &req, resp, err)
+}
+
 // CreateConversation .
 // @router /conversation/create [POST]
 func CreateConversation(ctx context.Context, c *app.RequestContext) {

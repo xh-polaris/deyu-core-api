@@ -63,7 +63,7 @@ func (d *CompletionDomain) Completion(ctx context.Context, uid string, req *core
 		ContentType:    cst.ContentTypeText,
 		MessageType:    cst.MessageTypeText,
 	}
-	m, err := getModel(ctx, uid, req)
+	m, err := GetModel(ctx, uid, req)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (d *CompletionDomain) doGenerate(ctx context.Context, info *CompletionInfo,
 	if err != nil {
 		return nil, err
 	}
-	return resp, cst.UnImplementErr // undo 非流式对话
+	return resp, nil
 }
 
 // 流式
@@ -144,6 +144,7 @@ func (d *CompletionDomain) doSSE(ctx context.Context, cancel context.CancelCause
 
 func eventMeta(info *CompletionInfo) *sse.Event {
 	meta := &adaptor.EventMeta{
+		ReplyId:          info.ReplyId,
 		MessageId:        info.MessageId,
 		ConversationId:   info.ConversationId,
 		SectionId:        info.SectionId,

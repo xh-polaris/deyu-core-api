@@ -105,3 +105,8 @@ func _sendverifycodeMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _generatebriefMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

@@ -15,7 +15,7 @@ func RegisterModel(name string, f getModelFunc) {
 	models[name] = f
 }
 
-// getModel 获取模型
-func getModel(ctx context.Context, uid string, req *core_api.CompletionsReq) (model.ToolCallingChatModel, error) {
+// GetModel 获取模型
+func GetModel(ctx context.Context, uid string, req *core_api.CompletionsReq) (model.ToolCallingChatModel, error) {
 	return models[req.Model](ctx, uid, req)
 }

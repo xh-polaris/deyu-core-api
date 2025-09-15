@@ -29,6 +29,7 @@ func Register(r *server.Hertz) {
 	}
 	{
 		_conversation := root.Group("/conversation", _conversationMw()...)
+		_conversation.POST("/brief", append(_generatebriefMw(), core_api.GenerateBrief)...)
 		_conversation.POST("/create", append(_createconversationMw(), core_api.CreateConversation)...)
 		_conversation.POST("/delete", append(_deleteconversationMw(), core_api.DeleteConversation)...)
 		_conversation.POST("/get", append(_getconversationMw(), core_api.GetConversation)...)

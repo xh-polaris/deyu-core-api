@@ -13,6 +13,7 @@ import (
 	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/util"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/util/logx"
 )
 
 func init() {
@@ -42,7 +43,8 @@ var (
 // ChatModel 德育大模型
 // 在openai模型基础上封装
 type ChatModel struct {
-	cli *openai.ChatModel
+	cli   *openai.ChatModel
+	Model string
 }
 
 func NewChatModel(ctx context.Context, uid string, req *core_api.CompletionsReq) (_ model.ToolCallingChatModel, err error) {
@@ -57,7 +59,7 @@ func NewChatModel(ctx context.Context, uid string, req *core_api.CompletionsReq)
 	if err != nil {
 		return nil, err
 	}
-	return &ChatModel{cli: cli}, nil
+	return &ChatModel{cli: cli, Model: req.Model}, nil
 }
 
 func (c *ChatModel) Generate(ctx context.Context, in []*schema.Message, opts ...model.Option) (*schema.Message, error) {
@@ -78,6 +80,7 @@ func (c *ChatModel) Stream(ctx context.Context, in []*schema.Message, opts ...mo
 		reverse = append(reverse, in[i])
 	}
 	if reader, err = c.cli.Stream(ctx, reverse, opts...); err != nil {
+		logx.Error("call %s err:%v", c.Model, err)
 		return nil, err
 	}
 	sr, sw := schema.Pipe[*schema.Message](5)
