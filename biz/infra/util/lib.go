@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httputil"
+	"time"
 
 	"github.com/xh-polaris/deyu-core-api/biz/application/dto/basic"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
@@ -50,7 +51,7 @@ func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("===== HTTP Request =====")
+	fmt.Printf("===== HTTP Request ===== at %s\n", time.Now().String())
 	fmt.Println(string(dumpReq))
 	fmt.Println("=======================")
 
@@ -65,7 +66,7 @@ func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("===== HTTP Response =====")
+	fmt.Printf("===== HTTP Response ===== at %s\n", time.Now().String())
 	fmt.Println(string(dumpResp))
 	fmt.Println("========================")
 

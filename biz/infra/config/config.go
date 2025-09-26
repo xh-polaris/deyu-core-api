@@ -30,6 +30,7 @@ type Deyu struct {
 	Name    string
 	APIKey  string
 	BaseURL string
+	BotID   string `json:",omitempty"`
 }
 
 type SMSConfig struct {
