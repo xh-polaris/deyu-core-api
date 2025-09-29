@@ -95,7 +95,7 @@ func (c *ChatModel) Stream(ctx context.Context, in []*schema.Message, opts ...mo
 		request := &coze.CreateChatsReq{
 			BotID:    config.GetConfig().Models[c.Model].BotID,
 			UserID:   c.Uid,
-			Messages: e2c(in),
+			Messages: e2c(reverse),
 		}
 		var stream coze.Stream[coze.ChatEvent]
 		if stream, err = c.cozeCli.Chat.Stream(ctx, request); err != nil {
