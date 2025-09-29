@@ -4,22 +4,18 @@ import (
 	"context"
 	"crypto/rand"
 	"errors"
-	"log"
 	"math/big"
+	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/wire"
-	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
-	tchttp "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/http"
-	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	"github.com/xh-polaris/deyu-core-api/biz/application/dto/basic"
 	"github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/cst"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/user"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/util"
-	"github.com/xh-polaris/deyu-core-api/biz/infra/util/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -110,7 +106,7 @@ func (s *AuthService) SendVerifyCode(ctx context.Context, req *core_api.SendVeri
 	}
 	// 发送验证码
 	if len(req.AuthType) < 10 || req.AuthType[:10] != "xh-polaris" {
-		if err = callSMS(config.GetConfig().SMS, []string{req.AuthId}, code.String()); err != nil {
+		if err = New(ctx, config.GetConfig().SMS.Account, config.GetConfig().SMS.Token).Send(ctx, req.AuthId, verifyCode, "5"); err != nil {
 			return nil, cst.VerifyCodeSendErr
 		}
 		return &core_api.SendVerifyCodeResp{Resp: util.Success()}, nil
@@ -118,34 +114,85 @@ func (s *AuthService) SendVerifyCode(ctx context.Context, req *core_api.SendVeri
 	return &core_api.SendVerifyCodeResp{Resp: &basic.Response{Code: 0, Msg: verifyCode}}, nil
 }
 
-func callSMS(sms *config.SMSConfig, phones []string, code string) error {
-	// 实例化一个认证对象，入参需要传入腾讯云账户 SecretId 和 SecretKey，此处还需注意密钥对的保密
-	// 密钥可前往官网控制台 https://console.cloud.tencent.com/cam/capi 进行获取
-	credential := common.NewCredential(sms.SecretId, sms.SecretKey)
-	cpf := profile.NewClientProfile()
-	cpf.HttpProfile.Endpoint, cpf.HttpProfile.ReqMethod = sms.Host, "POST"
-	client := common.NewCommonClient(credential, sms.Region, cpf).WithLogger(log.Default())
+//func callSMS(sms *config.SMSConfig, phones []string, code string) error {
+//	// 实例化一个认证对象，入参需要传入腾讯云账户 SecretId 和 SecretKey，此处还需注意密钥对的保密
+//	// 密钥可前往官网控制台 https://console.cloud.tencent.com/cam/capi 进行获取
+//	credential := common.NewCredential(sms.SecretId, sms.SecretKey)
+//	cpf := profile.NewClientProfile()
+//	cpf.HttpProfile.Endpoint, cpf.HttpProfile.ReqMethod = sms.Host, "POST"
+//	client := common.NewCommonClient(credential, sms.Region, cpf).WithLogger(log.Default())
+//
+//	request := tchttp.NewCommonRequest("sms", sms.Version, sms.Action)
+//
+//	// 模板参数
+//	codes := []string{code, "5"}
+//	params := map[string]any{
+//		"PhoneNumberSet":   phones,
+//		"SmsSdkAppId":      sms.SmsSdkAppId,
+//		"TemplateId":       sms.TemplateId,
+//		"SignName":         sms.SignName,
+//		"TemplateParamSet": codes,
+//	}
+//	if err := request.SetActionParameters(params); err != nil {
+//		return err
+//	}
+//
+//	response := tchttp.NewCommonResponse()
+//	if err := client.Send(request, response); err != nil {
+//		logx.Error("fail to invoke api:", err.Error())
+//		return err
+//	}
+//	logx.Info(string(response.GetBody()))
+//	return nil
+//}
 
-	request := tchttp.NewCommonRequest("sms", sms.Version, sms.Action)
+const (
+	singleSendURL   = "https://bluecloudccs.21vbluecloud.com/services/sms/messages?api-version=2018-10-01"
+	checkReceiveURL = "https://bluecloudccs.21vbluecloud.com/services/sms/messages/%s?api-version=2018-10-01&continuationToken=&count=10"
+)
 
-	// 模板参数
-	codes := []string{code, "5"}
-	params := map[string]any{
-		"PhoneNumberSet":   phones,
-		"SmsSdkAppId":      sms.SmsSdkAppId,
-		"TemplateId":       sms.TemplateId,
-		"SignName":         sms.SignName,
-		"TemplateParamSet": codes,
+type BluecloudSMS struct {
+	authHeader http.Header
+}
+
+func New(ctx context.Context, account, token string) *BluecloudSMS {
+	s, err := getBlueCloudSMSProvider(ctx, account, token)
+	if err != nil {
+		return nil
 	}
-	if err := request.SetActionParameters(params); err != nil {
+	return s
+}
+
+func getBlueCloudSMSProvider(ctx context.Context, account, token string) (*BluecloudSMS, error) {
+	header := http.Header{}
+	header.Set("content-type", "application/json")
+	header.Set("Account", account)
+	header.Set("Authorization", token)
+	return &BluecloudSMS{authHeader: header}, nil
+}
+
+// Send 发送验证码并校验用户是否成功收到
+func (b *BluecloudSMS) Send(ctx context.Context, phone, code, expire string) (err error) {
+	// 发送短信
+	if _, err = b.send(ctx, phone, code, expire); err != nil {
 		return err
 	}
-
-	response := tchttp.NewCommonResponse()
-	if err := client.Send(request, response); err != nil {
-		logx.Error("fail to invoke api:", err.Error())
-		return err
-	}
-	logx.Info(string(response.GetBody()))
 	return nil
+}
+
+func (b *BluecloudSMS) send(_ context.Context, phone, code, expire string) (map[string]any, error) {
+	body := map[string]any{
+		"phoneNumber": []string{phone},
+		"messageBody": map[string]any{
+			"extend": "00",
+			//"templateName": conf.GetConfig().SMS.CauseToTemplate[cause],
+			"templateName": "德育",
+			"templateParam": map[string]any{
+				"otpcode": code,   // 验证码
+				"expire":  expire, // 以分钟为单位超时时间
+			},
+		},
+	}
+	res, err := util.GetHttpClient().Post(singleSendURL, b.authHeader, body)
+	return res, err
 }
