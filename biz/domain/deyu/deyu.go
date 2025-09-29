@@ -22,7 +22,7 @@ func init() {
 	dm.RegisterModel(BZRModel, NewChatModel)
 	dm.RegisterModel(XKJSModel, NewChatModel)
 	dm.RegisterModel(QYDSModel, NewChatModel)
-	dm.RegisterModel(DYQBModel, NewChatModel)
+	dm.RegisterModel(DYGB, NewChatModel)
 	dm.RegisterModel(XYModel, NewChatModel)
 	dm.RegisterModel(JYLFModel, NewChatModel)
 }
@@ -35,7 +35,7 @@ var (
 	BZRModel     = "deyu-bzr"
 	XKJSModel    = "deyu-xkjs"
 	QYDSModel    = "deyu-qyds"
-	DYQBModel    = "deyu-dygb"
+	DYGB         = "deyu-dygb"
 	XYModel      = "deyu-xy"
 	JYLFModel    = "deyu-jylf"
 	APIVersion   = "v1"
@@ -52,7 +52,7 @@ type ChatModel struct {
 
 func NewChatModel(ctx context.Context, uid string, req *core_api.CompletionsReq) (_ model.ToolCallingChatModel, err error) {
 	m := &ChatModel{Model: req.Model, Uid: uid}
-	if req.Model == JYLFModel || req.Model == XYModel {
+	if req.Model == JYLFModel || req.Model == XYModel || req.Model == DYGB {
 		cozeCli := coze.NewCozeAPI(coze.NewTokenAuth(config.GetConfig().Models[req.Model].APIKey),
 			coze.WithBaseURL(config.GetConfig().Models[req.Model].BaseURL),
 			coze.WithHttpClient(util.NewDebugClient()))
@@ -91,7 +91,7 @@ func (c *ChatModel) Stream(ctx context.Context, in []*schema.Message, opts ...mo
 		in[i].Name = ""
 		reverse = append(reverse, in[i])
 	}
-	if c.Model == JYLFModel || c.Model == XYModel {
+	if c.Model == JYLFModel || c.Model == XYModel || c.Model == DYGB {
 		request := &coze.CreateChatsReq{
 			BotID:    config.GetConfig().Models[c.Model].BotID,
 			UserID:   c.Uid,
