@@ -52,7 +52,7 @@ type ChatModel struct {
 
 func NewChatModel(ctx context.Context, uid string, req *core_api.CompletionsReq) (_ model.ToolCallingChatModel, err error) {
 	m := &ChatModel{Model: req.Model, Uid: uid}
-	if req.Model == JYLFModel || req.Model == XYModel || req.Model == DYGB {
+	if req.Model != DefaultModel {
 		cozeCli := coze.NewCozeAPI(coze.NewTokenAuth(config.GetConfig().Models[req.Model].APIKey),
 			coze.WithBaseURL(config.GetConfig().Models[req.Model].BaseURL),
 			coze.WithHttpClient(util.NewDebugClient()))
@@ -91,7 +91,7 @@ func (c *ChatModel) Stream(ctx context.Context, in []*schema.Message, opts ...mo
 		in[i].Name = ""
 		reverse = append(reverse, in[i])
 	}
-	if c.Model == JYLFModel || c.Model == XYModel || c.Model == DYGB {
+	if c.Model != DefaultModel {
 		request := &coze.CreateChatsReq{
 			BotID:    config.GetConfig().Models[c.Model].BotID,
 			UserID:   c.Uid,
