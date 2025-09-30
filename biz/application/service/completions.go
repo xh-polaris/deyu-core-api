@@ -72,7 +72,7 @@ func (s *CompletionsService) GenerateBrief(ctx context.Context, req *core_api.Ge
 	if err != nil {
 		return nil, err
 	}
-	in := []*schema.Message{schema.SystemMessage("你是标题生成器, 你需要根据这个用户输入生成一个简要标题, 不超过十个字"),
+	in := []*schema.Message{schema.SystemMessage("需要根据这个用户输入生成一个简要标题, 不超过十个字"),
 		schema.UserMessage(req.Messages[0].Content)}
 	out, err := m.Generate(ctx, in)
 	if err != nil {
