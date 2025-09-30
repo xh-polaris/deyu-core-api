@@ -59,12 +59,13 @@ func NewChatModel(ctx context.Context, uid string, req *core_api.CompletionsReq)
 		m.cozeCli = &cozeCli
 	} else {
 		cli, err = openai.NewChatModel(ctx, &openai.ChatModelConfig{
-			APIKey:     config.GetConfig().Models[req.Model].APIKey,
-			BaseURL:    config.GetConfig().Models[req.Model].BaseURL,
-			APIVersion: APIVersion,
-			Model:      config.GetConfig().Models[req.Model].Name,
-			User:       &uid,
-			HTTPClient: util.NewDebugClient(),
+			APIKey:      config.GetConfig().Models[req.Model].APIKey,
+			BaseURL:     config.GetConfig().Models[req.Model].BaseURL,
+			APIVersion:  APIVersion,
+			Model:       config.GetConfig().Models[req.Model].Name,
+			User:        &uid,
+			HTTPClient:  util.NewDebugClient(),
+			ExtraFields: map[string]any{"chat_template_kwargs": map[string]any{"enable_thinking": false}},
 		})
 		m.cli = cli
 	}
