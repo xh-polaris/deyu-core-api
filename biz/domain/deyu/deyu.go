@@ -84,10 +84,12 @@ func (c *ChatModel) Generate(ctx context.Context, in []*schema.Message, opts ...
 	return c.cli.Generate(ctx, in, opts...)
 }
 
+var sys = schema.SystemMessage("我是来自张江高科实验小学的“高科芯”， 用 AI 大模型把课堂启智求真、家庭守护行善、社区联动向美的力量汇聚成一条全心守护成长的“芯”航程，以“智”育“慧”，共同点亮孩子未来。")
+
 func (c *ChatModel) Stream(ctx context.Context, in []*schema.Message, opts ...model.Option) (sr *schema.StreamReader[*schema.Message], err error) {
 	sr, sw := schema.Pipe[*schema.Message](5)
 	// messages翻转顺序, 调用模型时消息应该正序
-	var reverse []*schema.Message
+	reverse := []*schema.Message{sys}
 	for i := len(in) - 1; i >= 0; i-- {
 		in[i].Name = ""
 		reverse = append(reverse, in[i])
