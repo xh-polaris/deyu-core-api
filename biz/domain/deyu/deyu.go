@@ -89,7 +89,7 @@ var sys = schema.SystemMessage("我是来自张江高科实验小学的“高科
 func (c *ChatModel) Stream(ctx context.Context, in []*schema.Message, opts ...model.Option) (sr *schema.StreamReader[*schema.Message], err error) {
 	sr, sw := schema.Pipe[*schema.Message](5)
 	// messages翻转顺序, 调用模型时消息应该正序
-	reverse := []*schema.Message{sys}
+	var reverse []*schema.Message
 	for i := len(in) - 1; i >= 0; i-- {
 		in[i].Name = ""
 		reverse = append(reverse, in[i])
@@ -106,6 +106,7 @@ func (c *ChatModel) Stream(ctx context.Context, in []*schema.Message, opts ...mo
 		}
 		go cozeProcess(ctx, stream, sw)
 	} else {
+		reverse = append([]*schema.Message{sys}, reverse...)
 		var reader *schema.StreamReader[*schema.Message]
 		if reader, err = c.cli.Stream(ctx, reverse, opts...); err != nil {
 			logx.Error("call %s err:%v", c.Model, err)
