@@ -59,13 +59,12 @@ func NewChatModel(ctx context.Context, uid string, req *core_api.CompletionsReq)
 		m.cozeCli = &cozeCli
 	} else {
 		cli, err = openai.NewChatModel(ctx, &openai.ChatModelConfig{
-			APIKey:      config.GetConfig().Models[req.Model].APIKey,
-			BaseURL:     config.GetConfig().Models[req.Model].BaseURL,
-			APIVersion:  APIVersion,
-			Model:       config.GetConfig().Models[req.Model].Name,
-			User:        &uid,
-			HTTPClient:  util.NewDebugClient(),
-			ExtraFields: map[string]any{"chat_template_kwargs": map[string]any{"enable_thinking": false}},
+			APIKey:     config.GetConfig().Models[req.Model].APIKey,
+			BaseURL:    config.GetConfig().Models[req.Model].BaseURL,
+			APIVersion: APIVersion,
+			Model:      "InnoSpark",
+			User:       &uid,
+			HTTPClient: util.NewDebugClient(),
 		})
 		m.cli = cli
 	}
@@ -209,8 +208,6 @@ func process(ctx context.Context, reader *schema.StreamReader[*schema.Message], 
 	var data []byte
 	var msg *schema.Message
 
-	var pass bool // 跳过一个\n\n
-	var status = cst.EventMessageContentTypeText
 	for {
 		select {
 		case <-ctx.Done():
@@ -220,38 +217,11 @@ func process(ctx context.Context, reader *schema.StreamReader[*schema.Message], 
 				writer.Send(nil, err)
 				return
 			}
-			if pass && msg.Content == "\n\n" {
-				pass = false
-				continue
-			}
-
-			refine := &dm.RefineContent{}
-			// 处理消息
-			switch msg.Content {
-			case cst.ThinkStart: // 深度思考内容开始
-				status, pass = cst.EventMessageContentTypeThink, true
-				continue
-			case cst.SuggestStart: // 建议内容开始
-				status, pass = cst.EventMessageContentTypeSuggest, true
-				continue
-			case cst.ThinkEnd:
-				fallthrough // 切回普通内容
-			case cst.SuggestEnd:
-				status, pass = cst.EventMessageContentTypeText, true
-				continue
-			}
-			switch status {
-			case cst.EventMessageContentTypeText:
-				refine.Text = msg.Content
-			case cst.EventMessageContentTypeThink:
-				refine.Think = msg.Content
-			case cst.EventMessageContentTypeSuggest:
-				refine.Suggest = msg.Content
-			}
+			refine := &dm.RefineContent{Text: msg.Content}
 			if data, err = json.Marshal(&refine); err != nil {
 				continue
 			}
-			msg.Content, msg.Extra = string(data), map[string]any{cst.EventMessageContentType: status, cst.RawMessage: msg.Content}
+			msg.Content, msg.Extra = string(data), map[string]any{cst.EventMessageContentType: cst.EventMessageContentTypeText, cst.RawMessage: msg.Content}
 			writer.Send(msg, nil)
 		}
 	}

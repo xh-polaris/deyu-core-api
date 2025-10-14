@@ -3,6 +3,7 @@ package message
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"strconv"
 	"time"
 
@@ -101,7 +102,7 @@ func (m *mongoMapper) AllMessage(ctx context.Context, conversation string) (msgs
 		return nil, err
 	}
 	if err = m.conn.Find(ctx, msgs, bson.M{cst.ConversationId: ocid, cst.Status: bson.M{cst.NE: cst.DeletedStatus}},
-		options.Find().SetSort(bson.M{cst.CreateTime: -1})); err != nil {
+		options.Find().SetSort(bson.M{cst.CreateTime: -1})); err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
 		logx.Error("[message mapper] find err:%v", err)
 		return nil, err
 	}
@@ -169,6 +170,9 @@ func (m *mongoMapper) listAllMsg(ctx context.Context, key string) ([]*Message, e
 	result, err := m.rs.HgetallCtx(ctx, key)
 	if err != nil {
 		return nil, err
+	}
+	if len(result) == 0 {
+		return nil, errors.New("the key is not found")
 	}
 	msgs := make([]*Message, len(result), len(result))
 	for _, data := range result {
