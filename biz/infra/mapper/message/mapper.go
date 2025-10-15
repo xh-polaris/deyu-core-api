@@ -107,17 +107,19 @@ func (m *mongoMapper) AllMessage(ctx context.Context, conversation string) (msgs
 			logx.Error("[message mapper] find err:%v", err)
 			return nil, err
 		}
-		return nil, nil
+		return msgs, nil
 	}
 	// 删除原缓存
-	if _, err = m.rs.DelCtx(ctx, genCacheKey(msgs[0])); err != nil {
-		logx.Error("[message mapper] delete cache err:%v", err)
-		return msgs, nil // 缓存不应该影响正常使用
-	}
-	// 构建新缓存
-	if err = m.buildCache(ctx, msgs); err != nil {
-		logx.Error("[message mapper] build cache err:%v", err)
-		return msgs, nil
+	if len(msgs) > 0 {
+		if _, err = m.rs.DelCtx(ctx, genCacheKey(msgs[0])); err != nil {
+			logx.Error("[message mapper] delete cache err:%v", err)
+			return msgs, nil // 缓存不应该影响正常使用
+		}
+		// 构建新缓存
+		if err = m.buildCache(ctx, msgs); err != nil {
+			logx.Error("[message mapper] build cache err:%v", err)
+			return msgs, nil
+		}
 	}
 	return msgs, nil
 }
