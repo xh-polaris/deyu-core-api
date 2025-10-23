@@ -12,5 +12,6 @@ import (
 func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
 	r.GET("/asr", core_api.ASR)
+	r.POST("/auth/setPassword", core_api.SetPassword)
 	// your code ...
 }

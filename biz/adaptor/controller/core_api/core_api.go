@@ -8,6 +8,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/xh-polaris/deyu-core-api/biz/adaptor"
+	"github.com/xh-polaris/deyu-core-api/biz/adaptor/controller/cmd"
 	core_api "github.com/xh-polaris/deyu-core-api/biz/application/dto/core_api"
 	"github.com/xh-polaris/deyu-core-api/provider"
 )
@@ -190,5 +191,20 @@ func SendVerifyCode(ctx context.Context, c *app.RequestContext) {
 	}
 
 	resp, err := provider.Get().AuthService.SendVerifyCode(ctx, &req)
+	adaptor.PostProcess(ctx, c, &req, resp, err)
+}
+
+// SetPassword .
+// @router /auth/setPassword [POST]
+func SetPassword(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req cmd.SetPasswordReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp, err := provider.Get().AuthService.SetPassword(ctx, &req)
 	adaptor.PostProcess(ctx, c, &req, resp, err)
 }

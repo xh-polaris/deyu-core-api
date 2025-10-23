@@ -78,6 +78,7 @@ const (
 	Brief          = "brief"
 	Feedback       = "feedback"
 	Phone          = "phone"
+	Password       = "password"
 
 	Status        = "status"
 	DeletedStatus = -1
