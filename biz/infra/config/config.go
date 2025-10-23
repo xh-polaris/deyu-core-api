@@ -48,6 +48,12 @@ type Config struct {
 	Cache    cache.CacheConf
 	Redis    *redis.RedisConf
 	Mongo    Mongo
+	ASR      *ASR
+}
+
+type ASR struct {
+	Typ string
+	URL string
 }
 
 func NewConfig() (*Config, error) {

@@ -5,11 +5,12 @@ package main
 import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	handler "github.com/xh-polaris/deyu-core-api/biz/adaptor/controller"
+	"github.com/xh-polaris/deyu-core-api/biz/adaptor/controller/core_api"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
-
+	r.GET("/asr", core_api.ASR)
 	// your code ...
 }
