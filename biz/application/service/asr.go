@@ -3,18 +3,18 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"sync"
-	"time"
 
 	"github.com/bytedance/sonic"
 	"github.com/hertz-contrib/websocket"
 	"github.com/xh-polaris/deyu-core-api/biz/adaptor"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
+	"github.com/xh-polaris/deyu-core-api/pkg/errorx"
 	"github.com/xh-polaris/deyu-core-api/pkg/logs"
 	"github.com/xh-polaris/deyu-core-api/pkg/wsx"
+	"github.com/xh-polaris/deyu-core-api/type/errno"
 )
 
 const (
@@ -28,7 +28,7 @@ func ASR(ctx context.Context, conn *websocket.Conn) {
 		funasr(ctx, conn)
 	default:
 		if err := conn.Close(); err != nil {
-			logs.Error(err)
+			logs.Error(errorx.ErrorWithoutStack(err))
 		}
 		return
 	}
@@ -37,7 +37,7 @@ func ASR(ctx context.Context, conn *websocket.Conn) {
 func funasr(ctx context.Context, conn *websocket.Conn) {
 	manager := newFunASRManager(ctx, conn)
 	if err := manager.run(); err != nil && !wsx.IsNormal(wsx.Classify(err)) {
-		logs.Errorf("ASR processing failed: %v", err)
+		logs.Errorf("ASR processing failed: %s", errorx.ErrorWithoutStack(err))
 	}
 }
 
@@ -74,9 +74,6 @@ func (m *funASRManager) run() error {
 		case <-m.ctx.Done():
 			return m.ctx.Err()
 		default:
-			if err := m.conn.SetReadDeadline(time.Now().Add(3 * time.Second)); err != nil {
-				return err
-			}
 			mt, data, err := m.conn.ReadMessage()
 			if err != nil {
 				m.sendError(err)
@@ -114,11 +111,11 @@ func (m *funASRManager) handleTextMessage(data []byte) error {
 	}
 	jwt, ok := info["Authorization"]
 	if !ok {
-		return errors.New("no authorization")
+		return errorx.New(errno.UnAuthErrCode)
 	}
 	token, ok := jwt.(string)
 	if !ok {
-		return errors.New("no authorization")
+		return errorx.New(errno.UnAuthErrCode)
 	}
 	uid, err := adaptor.ExtractUserIdFromJWT(token)
 	if err != nil {
@@ -140,7 +137,7 @@ func (m *funASRManager) handleBinaryMessage(data []byte) error {
 	// 安全发送音频数据
 	if m.cli != nil {
 		if err := m.cli.WriteBytes(data); err != nil {
-			logs.Error("send audio data failed: %s", err)
+			logs.Errorf("send audio data failed: %s", errorx.ErrorWithoutStack(err))
 			return err
 		}
 	}
@@ -156,7 +153,7 @@ func (m *funASRManager) iniCli() (err error) {
 	}
 	// 发送初始化元数据
 	if err = m.cli.WriteString(m.meta); err != nil {
-		logs.Errorf("send meta data failed: %s", err)
+		logs.Errorf("send meta data failed: %s", errorx.ErrorWithoutStack(err))
 		return err
 	}
 	// 启动接收协程
@@ -187,14 +184,14 @@ func (m *funASRManager) receiveASRResults() {
 			fmt.Println(resp)
 			if m.conn != nil {
 				if err := m.conn.WriteMessage(websocket.TextMessage, []byte(resp)); err != nil {
-					logs.Errorf("send result to user failed: %s", err)
+					logs.Errorf("send result to user failed: %s", errorx.ErrorWithoutStack(err))
 					m.sendError(err)
 					return
 				}
 			}
 			info := map[string]any{}
 			if err = sonic.Unmarshal([]byte(resp), &info); err != nil {
-				logs.Errorf("unmarshal ASR result failed: %s", err)
+				logs.Errorf("unmarshal ASR result failed: %s", errorx.ErrorWithoutStack(err))
 				m.sendError(err)
 			}
 			if info["is_final"].(bool) {
@@ -210,7 +207,7 @@ func (m *funASRManager) sendError(err error) {
 	case <-m.ctx.Done():
 	default:
 		// 错误通道已满，直接记录日志
-		logs.Errorf("Error channel full, dropped error: %v", err)
+		logs.Errorf("Error channel full, dropped error: %s", errorx.ErrorWithoutStack(err))
 	}
 }
 
@@ -221,7 +218,7 @@ func (m *funASRManager) monitorErrors() {
 		return
 	case err := <-m.errChan:
 		if err != nil && !wsx.IsNormal(wsx.Classify(err)) {
-			logs.Errorf("ASR manager error: %v", err)
+			logs.Errorf("ASR manager error: %s", errorx.ErrorWithoutStack(err))
 		}
 		m.Close()
 	}
@@ -238,12 +235,12 @@ func (m *funASRManager) Close() {
 		m.cancel() // 取消上下文，通知所有协程退出
 		if m.conn != nil {
 			if err := m.conn.Close(); err != nil && !wsx.IsNormal(wsx.Classify(err)) {
-				logs.Errorf("Close user connection failed: %v", err)
+				logs.Errorf("Close user connection failed: %s", errorx.ErrorWithoutStack(err))
 			}
 		}
 		if m.cli != nil {
 			if err := m.cli.Close(); err != nil && !wsx.IsNormal(wsx.Classify(err)) {
-				logs.Errorf("Close ASR client failed: %v", err)
+				logs.Errorf("Close ASR client failed: %s", errorx.ErrorWithoutStack(err))
 			}
 		}
 	})
