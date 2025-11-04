@@ -149,6 +149,7 @@ func (s *AuthService) SendVerifyCode(ctx context.Context, req *core_api.SendVeri
 	// 发送验证码
 	if len(req.AuthType) < 10 || req.AuthType[:10] != "xh-polaris" {
 		if err = New(ctx, config.GetConfig().SMS.Account, config.GetConfig().SMS.Token).Send(ctx, req.AuthId, verifyCode, "5"); err != nil {
+			logs.Errorf("send verify err: %s", err)
 			return nil, cst.VerifyCodeSendErr
 		}
 		return &core_api.SendVerifyCodeResp{Resp: util.Success()}, nil

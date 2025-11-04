@@ -1,0 +1,65 @@
+name: deyu
+
+services:
+  mongodb:
+    image: bitnami/mongodb:latest
+    container_name: mongodb
+    restart: always
+    environment:
+      MONGODB_ROOT_USER: root
+      MONGODB_ROOT_PASSWORD: Deyu@Deyu2O25
+      MONGODB_DATABASE: deyu
+    volumes:
+      - ./data/mongodb:/bitnami/mongodb:rw,Z
+    ports:
+      - "27017:27017"
+    networks:
+      - deyu-network
+    healthcheck: # 新增健康检查
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  redis:
+    image: bitnami/redis:8.0
+    container_name: redis
+    restart: always
+    user: root
+    privileged: true
+    environment:
+      - REDIS_AOF_ENABLED=${REDIS_AOF_ENABLED:-no}
+      - REDIS_PORT_NUMBER=${REDIS_PORT_NUMBER:-6379}
+      - REDIS_IO_THREADS=${REDIS_IO_THREADS:-4}
+      - ALLOW_EMPTY_PASSWORD=${ALLOW_EMPTY_PASSWORD:-yes}
+    volumes:
+      - ./data/bitnami/redis:/bitnami/redis/data:rw,Z
+    healthcheck:
+      test: [ 'CMD', 'redis-cli', 'ping' ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 10s
+    networks:
+      - deyu-network
+
+  core-api:
+    image: xhpolaris/deyu-core-api:v1.0.26
+    restart: always
+    networks:
+      - deyu-network
+    volumes:
+      - ./conf/core-api:/app/etc
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: [ "sh", "./bootstrap.sh" ]
+    ports:
+      - "8080:8080"
+
+networks:
+  deyu-network:
+    driver: bridge
