@@ -9,9 +9,9 @@ on:
   push:
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
-    branches: [ "main" ]
+    branches: [ "main","deyu" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main","deyu" ]
 
 env:
   REGISTRY: docker.io
