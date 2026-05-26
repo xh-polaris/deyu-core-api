@@ -6,6 +6,7 @@ import (
 	"errors"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol"
@@ -46,6 +47,23 @@ func ExtractUserId(ctx context.Context) (userId string, err error) {
 	}
 	tokenString := c.GetHeader("Authorization")
 	return ExtractUserIdFromJWT(string(tokenString))
+}
+
+func GenerateJwtToken(uid, secret string, expire int64) (string, int64, error) {
+	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(secret))
+	if err != nil {
+		return "", 0, err
+	}
+	iat := time.Now().Unix()
+	exp := iat + expire
+	claims := jwt.MapClaims{"exp": exp, "iat": iat, "userId": uid}
+	token := jwt.New(jwt.SigningMethodES256)
+	token.Claims = claims
+	tokenString, err := token.SignedString(key)
+	if err != nil {
+		return "", 0, err
+	}
+	return tokenString, exp, nil
 }
 
 func ExtractUserIdFromJWT(tokenString string) (userId string, err error) {

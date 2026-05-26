@@ -12,6 +12,7 @@ import (
 	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/conversation"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/feedback"
+	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/invite_code"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/message"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/user"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/redis"
@@ -52,12 +53,19 @@ func NewProvider() (*Provider, error) {
 		UserMapper: userMongoMapper,
 		Redis:      redisRedis,
 	}
+	invite_codeMongoMapper := invite_code.NewInviteCodeMongoMapper(configConfig)
+	inviteService := &service.InviteService{
+		InviteCodeMapper: invite_codeMongoMapper,
+		UserMapper:       userMongoMapper,
+		Redis:            redisRedis,
+	}
 	providerProvider := &Provider{
 		Config:              configConfig,
 		CompletionsService:  completionsService,
 		ConversationService: conversationService,
 		FeedbackService:     feedbackService,
 		AuthService:         authService,
+		InviteService:       inviteService,
 		MessageDomain:       messageDomain,
 		CompletionDomain:    completionDomain,
 	}

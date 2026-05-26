@@ -31,6 +31,15 @@ var (
 	ConversationSearchErr   = New(30006, "搜索历史记录失败")
 )
 
+// 邀请码相关
+var (
+	NoInviteCodeErr    = New(333333, "未输入邀请码")
+	InviteCodeNotFound = New(333334, "邀请码不存在")
+	InviteCodeUsedUp   = New(333335, "邀请码已失效")
+	UserAlreadyBound   = New(333336, "用户已完成注册")
+	InviteCodeGenErr   = New(333337, "邀请码生成失败")
+)
+
 const unknowCode = 999
 
 // Errorx 是HTTP服务的业务异常

@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/wire"
 	"github.com/xh-polaris/deyu-core-api/biz/adaptor"
 	"github.com/xh-polaris/deyu-core-api/biz/adaptor/controller/cmd"
@@ -47,6 +46,11 @@ func (s *AuthService) Login(ctx context.Context, req *core_api.LoginReq) (*core_
 		return nil, findErr
 	}
 
+	// 校验邀请码
+	if errors.Is(findErr, cst.NotFound) || u.InviteCode == "" {
+		return nil, cst.NoInviteCodeErr
+	}
+
 	switch req.AuthType {
 	case cst.Phone: // 手机登录
 		// 校验验证码
@@ -83,28 +87,11 @@ func (s *AuthService) Login(ctx context.Context, req *core_api.LoginReq) (*core_
 
 	uid := u.Id.Hex()
 	secret, expire := config.GetConfig().Auth.SecretKey, config.GetConfig().Auth.AccessExpire
-	token, exp, err := generateJwtToken(uid, secret, expire)
+	token, exp, err := adaptor.GenerateJwtToken(uid, secret, expire)
 	if err != nil {
 		return nil, cst.LoginErr
 	}
 	return &core_api.LoginResp{Resp: &basic.Response{Code: code, Msg: ""}, Token: token, UserId: uid, Expire: exp}, nil
-}
-
-func generateJwtToken(uid, secret string, expire int64) (string, int64, error) {
-	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(secret))
-	if err != nil {
-		return "", 0, err
-	}
-	iat := time.Now().Unix()
-	exp := iat + expire
-	claims := jwt.MapClaims{"exp": exp, "iat": iat, "userId": uid}
-	token := jwt.New(jwt.SigningMethodES256)
-	token.Claims = claims
-	tokenString, err := token.SignedString(key)
-	if err != nil {
-		return "", 0, err
-	}
-	return tokenString, exp, nil
 }
 
 func (s *AuthService) SetPassword(ctx context.Context, req *cmd.SetPasswordReq) (*cmd.SetPasswordResp, error) {
@@ -134,6 +121,14 @@ func (s *AuthService) SetPassword(ctx context.Context, req *cmd.SetPasswordReq) 
 func (s *AuthService) SendVerifyCode(ctx context.Context, req *core_api.SendVerifyCodeReq) (*core_api.SendVerifyCodeResp, error) {
 	if req.AuthId == "" {
 		return nil, cst.PhoneNilErr
+	}
+	// 校验邀请码
+	u, findErr := s.UserMapper.FindOneByPhone(ctx, req.AuthId)
+	if findErr != nil && !errors.Is(findErr, cst.NotFound) {
+		return nil, findErr
+	}
+	if errors.Is(findErr, cst.NotFound) || u.InviteCode == "" {
+		return nil, cst.NoInviteCodeErr
 	}
 	// 构造验证码
 	code, err := rand.Int(rand.Reader, big.NewInt(900000))

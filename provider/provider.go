@@ -7,6 +7,7 @@ import (
 	"github.com/xh-polaris/deyu-core-api/biz/infra/config"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/conversation"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/feedback"
+	invitecode "github.com/xh-polaris/deyu-core-api/biz/infra/mapper/invite_code"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/message"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/mapper/user"
 	"github.com/xh-polaris/deyu-core-api/biz/infra/redis"
@@ -29,6 +30,7 @@ type Provider struct {
 	ConversationService service.IConversationService
 	FeedbackService     service.IFeedbackService
 	AuthService         service.IAuthService
+	InviteService       service.IInviteService
 	MessageDomain       *model.MessageDomain
 	CompletionDomain    *model.CompletionDomain
 }
@@ -44,6 +46,7 @@ var ApplicationSet = wire.NewSet(
 	service.ConversationServiceSet,
 	service.FeedbackServiceSet,
 	service.AuthServiceSet,
+	service.InviteServiceSet,
 )
 
 var DomainSet = wire.NewSet(
@@ -59,6 +62,7 @@ var InfraSet = wire.NewSet(
 	message.NewMessageMongoMapper,
 	feedback.NewFeedbackMongoMapper,
 	user.NewUserMongoMapper,
+	invitecode.NewInviteCodeMongoMapper,
 )
 
 var AllProvider = wire.NewSet(

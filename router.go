@@ -6,6 +6,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	handler "github.com/xh-polaris/deyu-core-api/biz/adaptor/controller"
 	"github.com/xh-polaris/deyu-core-api/biz/adaptor/controller/core_api"
+	"github.com/xh-polaris/deyu-core-api/biz/adaptor/controller/invite"
 )
 
 // customizeRegister registers customize routers.
@@ -13,5 +14,7 @@ func customizedRegister(r *server.Hertz) {
 	r.GET("/ping", handler.Ping)
 	r.GET("/asr", core_api.ASR)
 	r.POST("/auth/setPassword", core_api.SetPassword)
+	r.POST("/invite/check", invite.Check)
+	r.POST("/invite/gen", invite.Gen)
 	// your code ...
 }

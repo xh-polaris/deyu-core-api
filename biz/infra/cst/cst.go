@@ -79,6 +79,7 @@ const (
 	Feedback       = "feedback"
 	Phone          = "phone"
 	Password       = "password"
+	InviteCode     = "invite_code"
 
 	Status        = "status"
 	DeletedStatus = -1
