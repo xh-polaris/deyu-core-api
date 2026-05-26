@@ -62,7 +62,7 @@ func NewChatModel(ctx context.Context, uid string, req *core_api.CompletionsReq)
 			APIKey:     config.GetConfig().Models[req.Model].APIKey,
 			BaseURL:    config.GetConfig().Models[req.Model].BaseURL,
 			APIVersion: APIVersion,
-			Model:      "InnoSpark",
+			Model:      "InnoSpark-235B",
 			User:       &uid,
 			HTTPClient: util.NewDebugClient(),
 		})
